@@ -2,76 +2,56 @@ import express from 'express';
 
 const app = express()
 app.use(express.json());
+const PORT = 4000;
 
-const port = 3000
+const Products = [
+     {id:1 , name :"P1",price:50},
+     {id:2 , name :"P2",price:30},
+     {id:3 , name :"P3",price:60}
+    ];
 
-const Product = [
-  {id:1 , name :"P1",price:50},
-  {id:2 , name :"P2",price:30},
-  {id:3 , name :"P3",price:60}
-];
-
-
-
-app.post("/product",(req,res)=>{
-  const {name , price} = req.body;
-  const newProduct = {id:Product.length+1 , name , price}
-  Product.push(newProduct)
-  console.log(Product);
-  res.status(201).json({
-    msg:"Successful",Product})
+app.get("/product", (req, res) => {
+    res.status(200).json(Products)
 })
 
-
-app.get("/product",(req,res)=>{
-  res.status(200).json(Product)
+app.post("/product", (req, res) => {
+    const {name , price} = req.body;
+    const newProduct = {id:Products.length+1 , name , price}
+    Products.push(newProduct)
+    res.status(201).json({msg:"add product successful",Products})
 })
 
+app.put("/product/:id", (req, res) => {
+    const {id} = req.params;
+    const {name , price} = req.body;
+    const index = Products.findIndex(Product => Product.id === parseInt(id));
+    if(index == -1){
+        res.status(404).json({msg:"Product not found"});
+    }
+    if(name){
+        Products[index].name = name;
+    }
+    
+    if(price){
+        Products[index].name = price;
+    }
 
-
-app.put("/product/:id",(req,res)=>{
-  const {id} = req.params;
-  const {name , price} = req.body;
-  const index = Product.findIndex(Product => Product.id === parseInt(id));
-  if(index == -1){
-    res.status(404).json({msg:"Product not found"});
-  }
-  Product[index] = {...Product[index] , name , price}
-  res.status(200).json({msg:"Successful update product details",Product})
+    Product[index] = {...Product[index] , name , price}
+    res.status(200).json({msg:"update product successful",Products})
 })
 
-
-
-app.patch("/",(req,res)=>{
-  const {id} = req.params;
-  const {name , price} = req.body;
-  const index = Product.findIndex(P => P.id === parseInt(id));
-  if(index == -1){
-    res.status(404).json({msg:"Product not found"});
-  }
-  if(name){
-    Product[index].name = name;
-  }
-  if(price){
-    Product[index].price = price;
-  }
-  res.status(200).json({msg:"Successful update product details",Product})
+app.delete("/product/:id", (req, res) => {
+    const {id} = req.params;
+    const index = Products.findIndex(Product => Product.id === parseInt(id));
+    if(index == -1){
+        res.status(404).json({msg:"Product not found"});
+    }
+    Products.splice(index,1);
+    res.status(200).json({msg:"delete product successful",Products})
 })
 
 
 
-app.delete("/product/:id",(req,res)=>{
-  const {id} = req.params;
-  const index = Product.findIndex(p => p.id === parseInt(id));
-  if(index == -1){
-    res.status(404).json({msg:"Product not found"});
-  }
-  Product.splice(index,1);
-  res.status(200).json({msg:"Successful delete product",Product})
-})
-
-
-
-app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`)
+app.listen(PORT, () => {
+    console.log(`Example app listening on port ${PORT}`)
 })
