@@ -26,17 +26,17 @@ app.put("/product/:id", (req, res) => {
     const {name , price} = req.body;
     const index = Products.findIndex(Product => Product.id === parseInt(id));
     if(index == -1){
-        res.status(404).json({msg:"Product not found"});
+        return res.status(404).json({msg:"Product not found"});
     }
     if(name){
         Products[index].name = name;
     }
     
     if(price){
-        Products[index].name = price;
+        Products[index].price = price;
     }
 
-    Product[index] = {...Product[index] , name , price}
+    
     res.status(200).json({msg:"update product successful",Products})
 })
 
